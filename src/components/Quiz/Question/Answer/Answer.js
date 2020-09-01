@@ -3,6 +3,8 @@ import React from 'react';
 const answer = props => {
     const questionIndexString = "question" + props.questionIndex;
     const answerIndexString = "answer" + props.answerIndex;
+
+    const isCorrectAnswer = parseInt(props.correctAnswer) === parseInt(props.answerIndex);
     
     return (
         <div className="form-group form-row align-items-center">
@@ -11,23 +13,25 @@ const answer = props => {
                 className="col-3 col-form-label">
                 Answer {props.answerIndex + 1}:
             </label>
-
             <div className="col">
                 <input 
                     type="text" 
                     className="form-control" 
                     id={`${questionIndexString}-${answerIndexString}`}
-                    value={props.answer} />
+                    value={props.answer}
+                    onChange={event => props.answerChanged(event, props.questionIndex, props.answerIndex)} />
             </div>
 
             <div className="col-auto">
                 <div className="form-check">
                     <input 
                         className="form-check-input" 
-                        checked={props.isCorrect}
                         type="radio" 
                         name={`${questionIndexString}-answers`} 
-                        id={`${questionIndexString}-answers-${answerIndexString}`} />
+                        id={`${questionIndexString}-answers-${answerIndexString}`}
+                        value={props.answerIndex}
+                        checked={isCorrectAnswer}
+                        onChange={event => props.questionPropertyChanged(event, props.questionIndex, "correctAnswer")} />
                     <label 
                         className="form-check-label" 
                         htmlFor={`${questionIndexString}-answers-${answerIndexString}`}></label>
