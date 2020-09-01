@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+import { connect } from 'react-redux';
+import * as actions from '../../store/actions';
+
 import Question from '../../components/Quiz/Question/Question';
 
 const initialQuestionSetup = {
@@ -128,7 +131,7 @@ class QuizBuilder extends Component {
                 
                 <button 
                     className="btn btn-success btn-lg float-right"
-                    onClick={this.addQuestionHandler}>
+                    onClick={() => this.props.createQuizHandler(this.state)}>
                     <i className="fa fa-check mr-2"></i>
                     Save Quiz
                 </button>
@@ -137,4 +140,10 @@ class QuizBuilder extends Component {
     }
 };
 
-export default QuizBuilder;
+const mapDispatchToProps = dispatch => {
+    return {
+        createQuizHandler: (quiz) => dispatch(actions.createQuiz(quiz))
+    };
+};
+
+export default connect(null, mapDispatchToProps)(QuizBuilder);

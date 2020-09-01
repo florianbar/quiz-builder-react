@@ -1,5 +1,6 @@
 import React from 'react';
 
+import classes from './Question.module.css';
 import Answer from './Answer/Answer';
 
 const question = props => {
@@ -20,7 +21,7 @@ const question = props => {
     const questionIndexString = "question" + props.questionIndex;
 
     return (
-        <div className="card mb-3">
+        <div className={[classes.Question, "card mb-4"].join(" ")}>
             <h5 className="card-header">
                 Question {props.questionIndex + 1}
 
