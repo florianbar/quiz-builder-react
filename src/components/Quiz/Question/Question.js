@@ -12,7 +12,8 @@ const question = props => {
                 answer={item}
                 correctAnswer={props.correctAnswer}
                 questionPropertyChanged={props.questionPropertyChanged}
-                answerChanged={props.answerChanged} />
+                answerChanged={props.answerChanged}
+                removeAnswer={() => props.removeAnswer(props.questionIndex, index)} />
         );
     });
 
@@ -26,8 +27,8 @@ const question = props => {
                 <button 
                     className="btn btn-danger btn-sm float-right"
                     onClick={props.removeQuestion}>
-                        <i className="fa fa-trash"></i>
-                    </button>
+                    <i className="fa fa-trash"></i>
+                </button>
             </h5>
 
             <div className="card-body">

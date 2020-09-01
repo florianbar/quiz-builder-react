@@ -38,6 +38,13 @@ const answer = props => {
                 </div>
             </div>
 
+            <div className="col-auto">
+                <button 
+                    className="btn btn-danger btn-sm float-right"
+                    onClick={props.removeAnswer}>
+                    <i className="fa fa-trash"></i>
+                </button>
+            </div>
         </div>
     );
 };

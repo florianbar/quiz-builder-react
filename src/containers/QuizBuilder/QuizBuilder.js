@@ -2,6 +2,12 @@ import React, { Component } from 'react';
 
 import Question from '../../components/Quiz/Question/Question';
 
+const initialQuestionSetup = {
+    title: "",
+    answers: [ "", "" ],
+    correctAnswer: 0
+};
+
 class QuizBuilder extends Component {
     state = {
         name: "",
@@ -43,12 +49,28 @@ class QuizBuilder extends Component {
         this.setState({ questions: updatedQuestions });
     }
 
-    addQuestionHandler = () => {
-        const newQuestion = {
-            title: "",
-            answers: [ "", "" ],
-            correctAnswer: 0
+    removeAnswerHandler = (questionIndex, answerIndex) => {
+        const updatedQuestions = [ ...this.state.questions ];
+
+        // update the correct answer
+        let updatedCorrectAnswer = parseInt(this.state.questions[questionIndex].correctAnswer);
+        if (parseInt(answerIndex) === updatedCorrectAnswer) {
+            updatedCorrectAnswer = 0;
+        } else if (parseInt(answerIndex) < updatedCorrectAnswer) {
+            updatedCorrectAnswer = updatedCorrectAnswer - 1;
+        }
+
+        const updatedQuestion = { 
+            ...this.state.questions[questionIndex],  
+            answers: [...this.state.questions[questionIndex].answers].filter((item, index) => index !== answerIndex),
+            correctAnswer: updatedCorrectAnswer
         };
+        updatedQuestions[questionIndex] = updatedQuestion;
+        this.setState({ questions: updatedQuestions });
+    }
+
+    addQuestionHandler = () => {
+        const newQuestion = { ...initialQuestionSetup };
         const updatedQuestions = [ ...this.state.questions ].concat(newQuestion);
         this.setState({ questions: updatedQuestions });
     }
@@ -71,6 +93,7 @@ class QuizBuilder extends Component {
                     questionPropertyChanged={this.questionPropertyChangedHandler}
                     answerChanged={this.answerChangedHandler}
                     addAnswer={this.addAnswerHandler}
+                    removeAnswer={this.removeAnswerHandler}
                     removeQuestion={() => this.removeQuestionHandler(index)} />
             );
         });
