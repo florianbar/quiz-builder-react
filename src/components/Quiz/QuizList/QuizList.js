@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const quizList = (props) => {
-    const quizList = Object.keys(props.quizzes).map(id => {
+    const list = Object.keys(props.quizzes).map(id => {
         return (
             <Link
                 key={id} 
@@ -17,7 +17,7 @@ const quizList = (props) => {
     return (
         <div>
             <div className="list-group mb-3">
-                {quizList}
+                {list}
             </div>
         </div>
     );

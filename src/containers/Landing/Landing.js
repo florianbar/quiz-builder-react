@@ -1,22 +1,38 @@
 import React, { Component } from 'react';
-
+import axios from '../../axios-quiz-builder';
 import { Link } from 'react-router-dom';
-
-import { connect } from 'react-redux';
-import * as actions from '../../store/actions';
 
 import QuizList from '../../components/Quiz/QuizList/QuizList';
 
 class Landing extends Component {
+    state = {
+        quizzes: null
+    };
+
     componentDidMount () {
-        this.props.fetchQuizzesHandler();
+        this.fetchQuizzesHandler();
+    }
+
+    fetchQuizzesHandler = () => {
+        axios.get("/quizzes.json")
+            .then(response => {
+                this.setState({ quizzes: response.data });
+            })
+            .catch(error => {
+                console.log(error);
+            });
     }
 
     render() {
+        let quizList = "Loading...";
+        if (this.state.quizzes) {
+            quizList = <QuizList quizzes={this.state.quizzes} />;
+        }
+
         return (
             <div>
                 <h1 className="page-title">Quiz Builder</h1>
-                <QuizList quizzes={this.props.quizzes} />
+                {quizList}
                 <Link 
                     to="/quiz/create" 
                     className="btn btn-primary btn-sm float-right">
@@ -28,16 +44,4 @@ class Landing extends Component {
     };
 }
 
-const mapStateToProps = state => {
-    return {
-        quizzes: state.quizzes
-    };
-};
-
-const mapDispatchToProps = dispatch => {
-    return {
-        fetchQuizzesHandler: () => dispatch(actions.fetchQuizzes())
-    };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Landing);
+export default Landing;
