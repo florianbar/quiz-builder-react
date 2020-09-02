@@ -4,20 +4,16 @@ const initialState = {
     quizzes: {}
 };
 
-const createQuizSuccess = (state, action) => {
-    const updatedQuizzes = {
-        ...state.quizzes,
-        [action.id]: action.data
-    };
+const fetchQuizzesSuccess = (state, action) => {
     return {
         ...state,
-        quizzes: updatedQuizzes
+        quizzes: action.data
     };
 };
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case actionTypes.CREATE_QUIZ_SUCCESS: return createQuizSuccess(state, action);
+        case actionTypes.FETCH_QUIZZES_SUCCESS: return fetchQuizzesSuccess(state, action);
         default: return state;
     }
 };

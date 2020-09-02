@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-
-import { connect } from 'react-redux';
-import * as actions from '../../store/actions';
+import axios from '../../axios-quiz-builder';
 
 import Question from '../../components/Quiz/Question/Question';
 
@@ -84,6 +82,16 @@ class QuizBuilder extends Component {
         this.setState({ questions: updatedQuestions });
     }
 
+    createQuizHandler = () => {     
+        axios.post("/quizzes.json", {...this.state})
+            .then(() => {
+                this.props.history.replace("/");
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
     render () {
         const questions = this.state.questions.map((item, index) => {
             return (
@@ -103,17 +111,21 @@ class QuizBuilder extends Component {
 
         return (
             <div>
-                <h1>Quiz Builder</h1>
+                <h1 className="page-title">Let's Get Started!</h1>
 
-                <div className="form-group">
-                    <label htmlFor="name">Quiz Name</label>
-                    <input 
-                        className="form-control" 
-                        type="text" 
-                        id="name" 
-                        name="name" 
-                        value={this.state.name}
-                        onChange={this.nameChangedHandler} />
+                <div className="form-group row">
+                    <label 
+                        className="col-sm-3 col-form-label" 
+                        htmlFor="name">Quiz Name:</label>
+                    <div className="col">
+                        <input 
+                            className="form-control" 
+                            type="text" 
+                            id="name" 
+                            name="name"
+                            value={this.state.name}
+                            onChange={this.nameChangedHandler} />
+                    </div>
                 </div>
 
                 {questions}
@@ -131,19 +143,13 @@ class QuizBuilder extends Component {
                 
                 <button 
                     className="btn btn-success btn-lg float-right"
-                    onClick={() => this.props.createQuizHandler(this.state)}>
+                    onClick={this.createQuizHandler}>
                     <i className="fa fa-check mr-2"></i>
-                    Save Quiz
+                    Create Quiz
                 </button>
             </div>
         );
     }
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        createQuizHandler: (quiz) => dispatch(actions.createQuiz(quiz))
-    };
-};
-
-export default connect(null, mapDispatchToProps)(QuizBuilder);
+export default QuizBuilder;

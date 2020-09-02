@@ -1,21 +1,18 @@
 import axios from '../axios-quiz-builder';
 import * as actionTypes from './actionTypes';
 
-const createQuizSuccess = (id, data) => {
+const fetchQuizzesSuccess = (data) => {
     return {
-        type: actionTypes.CREATE_QUIZ_SUCCESS,
-        id: id,
+        type: actionTypes.FETCH_QUIZZES_SUCCESS,
         data: data
     };
 };
 
-export const createQuiz = (data) => {
+export const fetchQuizzes = () => {
     return dispatch => {
-        //dispatch(createQuizStart());
-
-        axios.post("/quizzes.json", data)
+        axios.get("/quizzes.json")
             .then(response => {
-                dispatch(createQuizSuccess(response.data.name, data));
+                dispatch(fetchQuizzesSuccess(response.data));
             })
             .catch(error => {
                 console.log(error);
