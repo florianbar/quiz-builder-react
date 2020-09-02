@@ -7,7 +7,7 @@ const quizList = (props) => {
         return (
             <Link
                 key={id} 
-                to={"/quiz?id=" + id} 
+                to={"/quiz/" + id} 
                 className="list-group-item list-group-item-action">
                 {props.quizzes[id].name}
             </Link>
