@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import axios from '../../axios-quiz-builder';
 
-import Question from '../../components/Quiz/Question/Question';
+import Question from '../../components/QuizBuilder/Question/Question';
 
 const initialQuestionSetup = {
     title: "",

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from '../../axios-quiz-builder';
 import { Link } from 'react-router-dom';
 
-import QuizList from '../../components/Quiz/QuizList/QuizList';
+import QuizList from '../../components/QuizList/QuizList';
 
 class Landing extends Component {
     state = {
