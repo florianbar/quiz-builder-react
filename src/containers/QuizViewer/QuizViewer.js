@@ -1,12 +1,16 @@
 import React, { Component } from 'react';
 import axios from '../../axios-quiz-builder';
 
+import Answers from '../../components/QuizViewer/Answers/Answers';
+import ProgressBar from '../../components/QuizViewer/ProgressBar/ProgressBar';
+import ValidationMessage from '../../components/QuizViewer/ValidationMessage/ValidationMessage';
+
 class QuizViewer extends Component {
     state = {
         quiz: null,
         page: 0,
-        score: 0,
-        selectedAnswer: null
+        selectedAnswer: null,
+        score: 0
     }
 
     componentDidMount () {
@@ -27,88 +31,77 @@ class QuizViewer extends Component {
     }
 
     selectAnswerHandler = (index) => {
+        let updatedScore = this.state.score;
+        if (this.checkAnswerHandler(index)) {
+            updatedScore += 1; 
+        }
         this.setState({ 
-            selectedAnswer: index
+            selectedAnswer: index,
+            score: updatedScore
+        });
+    }
+
+    nextQuestionHandler = () => {
+        const updatedPage = this.state.page + 1;
+        this.setState({ 
+            selectedAnswer: null,
+            page: updatedPage
         });
     }
 
     render () {
-        let quiz = (<div>Loading...</div>);
+        let quiz = <div>Loading...</div>;
+
         if (this.state.quiz) {
-            const pageNum = this.state.page + 1;
             const question = this.state.quiz.questions[this.state.page];
-            const answers = question.answers.map((item, index) => {
-                let answerClasses = "";
-                const hasSelectedAnswer = this.state.selectedAnswer !== null;
-                if (hasSelectedAnswer) {
-                    if (index === parseInt(this.state.selectedAnswer)) {
-                        if (this.checkAnswerHandler(index)) {
-                            answerClasses = "list-group-item-success";
-                        } else {
-                            answerClasses = "list-group-item-danger";
-                        }
-                    } 
-                }
+            const hasSelectedAnswer = this.state.selectedAnswer !== null;
 
-                return (
-                    <button
-                        className={["list-group-item list-group-item-action", answerClasses].join(" ")}
-                        key={index} 
-                        onClick={() => this.selectAnswerHandler(index)}>
-                        {item}
-                    </button>
+            let validationMessage = null;
+            let nextButton = null;
+            if (hasSelectedAnswer) {
+                validationMessage = (
+                    <ValidationMessage 
+                        isCorrect={this.checkAnswerHandler(this.state.selectedAnswer)} 
+                        correctAnswer={question.answers[question.correctAnswer]} />
                 );
-            });
-            quiz = (
-                <div>
-                    <h1 className="page-title">{this.state.quiz.name}</h1>
-
-                    <h3>
-                        Question {pageNum}:<br />
-                        {question.title}
-                    </h3>
-
-                    <div className="list-group mb-3">
-                        {answers}
-                    </div>
-
-                    <div className="row no-gutters mb-3">
-                        <div className="col-auto">
-                            <i className="fa fa-times mr-2 text-danger"></i>
-                        </div>
-                        <div className="col font-weight-bold">
-                            <div className="text-danger">
-                                That is incorrect.
-                            </div> 
-                            <div>
-                                The correct answer is 12.
-                            </div> 
-                        </div>
-                    </div>
-
-                    <div className="row no-gutters mb-3 text-success">
-                        <div className="col-auto">
-                            <i className="fa fa-check mr-2"></i>
-                        </div>
-                        <div className="col font-weight-bold">
-                            Well done! That is correct.
-                        </div>
-                    </div>
-
-                    <hr />
-
-                    <div className="clearfix">
+                nextButton = (
+                    <div className="clearfix mb-3">
                         <button 
                             className="btn btn-success btn-lg float-right"
-                            onClick={null}>
+                            onClick={this.nextQuestionHandler}>
                             Next Question
                             <i className="fa fa-chevron-right ml-2"></i>
                         </button>
                     </div>
+                );
+            }
 
-                    <div>
-                        Question {pageNum} of {this.state.quiz.questions.length}
+            quiz = (
+                <div>
+                    <h1 className="page-title">{this.state.quiz.name}</h1>
+
+                    Score: {this.state.score}/{this.state.quiz.questions.length} 
+
+                    <ProgressBar 
+                        pageCount={this.state.quiz.questions.length}
+                        currentPage={this.state.page} />
+
+                    <h4 className="mb-0">Question {this.state.page + 1}:</h4>
+                    <h3 
+                        className="display-4" 
+                        style={{fontSize: "2.5em"}}>{question.title}</h3>
+
+                    <div className="mb-3">
+                        <Answers 
+                            answers={question.answers}
+                            selectedAnswer={parseInt(this.state.selectedAnswer)}
+                            hasSelectedAnswer={hasSelectedAnswer}
+                            selectAnswer={this.selectAnswerHandler}
+                            checkAnswer={this.checkAnswerHandler} />
                     </div>
+
+                    {validationMessage}
+                    {nextButton}
                 </div>
             );
         }
