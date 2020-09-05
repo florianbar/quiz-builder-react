@@ -1,7 +1,7 @@
 import React from 'react';
 
 const progressBar = (props) => {
-    const progressBarWidth = 100 / props.pageCount * (props.currentPage + 1);
+    const progressBarWidth = 100 / props.total * (props.value + 1);
 
     return (
         <div 
