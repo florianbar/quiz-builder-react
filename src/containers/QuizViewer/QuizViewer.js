@@ -1,51 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import axios from '../../axios-quiz-builder';
+import React, { useEffect, useContext } from 'react';
 
+import { QuizViewerContext } from '../../context/quizviewer-context';
 import Answers from '../../components/QuizViewer/Answers/Answers';
 import ValidationMessage from '../../components/QuizViewer/ValidationMessage/ValidationMessage';
 import ProgressBar from '../../components/UI/ProgressBar/ProgressBar';
 import Button from '../../components/UI/Button/Button';
 
 const QuizViewer = props => {
-    const [quiz, setQuiz] = useState(null);
-    const [page, setPage] = useState(0);
-    const [selectedAnswer, setSelectedAnswer] = useState(null);
-    const [score, setScore] = useState(0);
+    const quiz = useContext(QuizViewerContext).quiz;
+    const page = useContext(QuizViewerContext).page;
+    const selectedAnswer = useContext(QuizViewerContext).selectedAnswer;
+    const score = useContext(QuizViewerContext).score;
+    const initHandler = useContext(QuizViewerContext).initHandler;
+    const checkAnswerHandler = useContext(QuizViewerContext).checkAnswerHandler;
+    const nextQuestionHandler = useContext(QuizViewerContext).nextQuestionHandler;
+    const finishQuizHandler = useContext(QuizViewerContext).finishQuizHandler;
 
     useEffect(() => {
-        const id = props.match.params.id
-        axios.get(`/quizzes/${id}.json`)
-            .then(response => {
-                setQuiz(response.data);
-            })
-            .catch(error => {
-                console.log(error);
-            });
-    }, [props.match.params.id]);
-
-    const checkAnswerHandler = index => {
-        const correctAnswer = quiz.questions[page].correctAnswer;
-        return parseInt(index) === parseInt(correctAnswer);
-    };
-
-    const selectAnswerHandler = (index) => {
-        let updatedScore = score;
-        if (checkAnswerHandler(index)) {
-            updatedScore += 1; 
-        }
-        setSelectedAnswer(index);
-        setScore(updatedScore);
-    };
-
-    const nextQuestionHandler = () => {
-        const updatedPage = page + 1;
-        setSelectedAnswer(null);
-        setPage(updatedPage);
-    };
-
-    const finishQuizHandler = () => {
-        props.history.push("/");
-    };
+        initHandler();
+    }, [initHandler]);
 
     let content = <div>Loading...</div>;
 
@@ -86,9 +59,7 @@ const QuizViewer = props => {
                         <Answers 
                             answers={question.answers}
                             selectedAnswer={parseInt(selectedAnswer)}
-                            hasSelectedAnswer={hasSelectedAnswer}
-                            selectAnswer={selectAnswerHandler}
-                            checkAnswer={checkAnswerHandler} />
+                            hasSelectedAnswer={hasSelectedAnswer} />
                     </div>
                     {validationMessage}
                     <div className="clearfix mb-3">
