@@ -8,7 +8,7 @@ import Landing from './containers/Landing/Landing';
 import QuizBuilder from './containers/QuizBuilder/QuizBuilder';
 import QuizViewer from './containers/QuizViewer/QuizViewer';
 
-function App() {
+const App = () => {
   return (
     <Layout>
       <Switch>

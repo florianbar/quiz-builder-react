@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from '../../axios-quiz-builder';
 
 import Question from '../../components/QuizBuilder/Question/Question';
@@ -9,52 +9,57 @@ const initialQuestionSetup = {
     correctAnswer: 0
 };
 
-class QuizBuilder extends Component {
-    state = {
-        name: "",
-        questions: []
-    }
+const QuizBuilder = props => {
+    const [name, setName] = useState("");
+    const [questions, setQuestions] = useState([]);
 
-    componentDidMount () {
-        this.addQuestionHandler();
-    }
+    useEffect(() => {
+        addQuestionHandler();
+    }, []);
 
-    nameChangedHandler = (event) => {
-        this.setState({ name: event.target.value });
-    }
+    const addQuestionHandler = () => {
+        const newQuestion = { ...initialQuestionSetup };
+        const updatedQuestions = [ ...questions ].concat(newQuestion);
+        setQuestions(updatedQuestions);
+    };
 
-    questionPropertyChangedHandler = (event, questionIndex, property) => {
+    const nameChangedHandler = (event) => {
+        setName(event.target.value);
+    };
+
+    const questionPropertyChangedHandler = (event, questionIndex, property) => {
         // used for "title" and "correctAnswer"
-        const updatedQuestions = [ ...this.state.questions ];
+        const updatedQuestions = [ ...questions ];
         const updatedQuestion = { ...updatedQuestions[questionIndex] };
         updatedQuestions[questionIndex] = updatedQuestion;
         updatedQuestions[questionIndex][property] = event.target.value;
-        this.setState({ questions: updatedQuestions });
-    }
+        setQuestions(updatedQuestions);
+    };
 
-    answerChangedHandler = (event, questionIndex, answerIndex) => {
-        const updatedQuestions = [ ...this.state.questions ];
+    const answerChangedHandler = (event, questionIndex, answerIndex) => {
+        const updatedQuestions = [ ...questions ];
         const updatedQuestion = { ...updatedQuestions[questionIndex] };
         const updatedAnswers = [ ...updatedQuestion.answers ];
         updatedAnswers[answerIndex] = event.target.value;
         updatedQuestions[questionIndex] = updatedQuestion;
         updatedQuestions[questionIndex].answers = updatedAnswers;
-        this.setState({ questions: updatedQuestions });
-    }
+        setQuestions(updatedQuestions);
 
-    addAnswerHandler = (questionIndex) => {
-        const updatedQuestions = [ ...this.state.questions ];
+    };
+
+    const addAnswerHandler = (questionIndex) => {
+        const updatedQuestions = [ ...questions ];
         const updatedQuestion = { ...updatedQuestions[questionIndex] };
         updatedQuestions[questionIndex] = updatedQuestion;
         updatedQuestions[questionIndex].answers = updatedQuestions[questionIndex].answers.concat("");
-        this.setState({ questions: updatedQuestions });
-    }
+        setQuestions(updatedQuestions);
+    };
 
-    removeAnswerHandler = (questionIndex, answerIndex) => {
-        const updatedQuestions = [ ...this.state.questions ];
+    const removeAnswerHandler = (questionIndex, answerIndex) => {
+        const updatedQuestions = [ ...questions ];
 
         // update the correct answer
-        let updatedCorrectAnswer = parseInt(this.state.questions[questionIndex].correctAnswer);
+        let updatedCorrectAnswer = parseInt(questions[questionIndex].correctAnswer);
         if (parseInt(answerIndex) === updatedCorrectAnswer) {
             updatedCorrectAnswer = 0;
         } else if (parseInt(answerIndex) < updatedCorrectAnswer) {
@@ -62,94 +67,88 @@ class QuizBuilder extends Component {
         }
 
         const updatedQuestion = { 
-            ...this.state.questions[questionIndex],  
-            answers: [...this.state.questions[questionIndex].answers].filter((item, index) => index !== answerIndex),
+            ...questions[questionIndex],  
+            answers: [...questions[questionIndex].answers].filter((item, index) => index !== answerIndex),
             correctAnswer: updatedCorrectAnswer
         };
         updatedQuestions[questionIndex] = updatedQuestion;
-        this.setState({ questions: updatedQuestions });
-    }
+        setQuestions(updatedQuestions);
+    };
 
-    addQuestionHandler = () => {
-        const newQuestion = { ...initialQuestionSetup };
-        const updatedQuestions = [ ...this.state.questions ].concat(newQuestion);
-        this.setState({ questions: updatedQuestions });
-    }
+    
 
-    removeQuestionHandler = (questionIndex) => {
+    const removeQuestionHandler = (questionIndex) => {
         console.log("[removeQuestionHandler]", questionIndex);
-        const updatedQuestions = this.state.questions.filter((item, index) => index !== questionIndex);
-        this.setState({ questions: updatedQuestions });
-    }
+        const updatedQuestions = questions.filter((item, index) => index !== questionIndex);
+        setQuestions(updatedQuestions);
+    };
 
-    createQuizHandler = () => {     
-        axios.post("/quizzes.json", {...this.state})
+    const createQuizHandler = () => {     
+        axios.post("/quizzes.json", {name: name, questions: questions})
             .then(() => {
-                this.props.history.replace("/");
+                props.history.replace("/");
             })
             .catch(error => {
                 console.log(error);
             });
-    }
+    };
 
-    render () {
-        const questions = this.state.questions.map((item, index) => {
-            return (
-                <Question 
-                    key={index}
-                    questionIndex={index}
-                    title={item.title} 
-                    answers={item.answers} 
-                    correctAnswer={item.correctAnswer}
-                    questionPropertyChanged={this.questionPropertyChangedHandler}
-                    answerChanged={this.answerChangedHandler}
-                    addAnswer={this.addAnswerHandler}
-                    removeAnswer={this.removeAnswerHandler}
-                    removeQuestion={() => this.removeQuestionHandler(index)} />
-            );
-        });
-
+    const questionContent = questions.map((item, index) => {
         return (
-            <div>
-                <h1 className="page-title">Let's Get Started!</h1>
+            <Question 
+                key={index}
+                questionIndex={index}
+                title={item.title} 
+                answers={item.answers} 
+                correctAnswer={item.correctAnswer}
+                questionPropertyChanged={questionPropertyChangedHandler}
+                answerChanged={answerChangedHandler}
+                addAnswer={addAnswerHandler}
+                removeAnswer={removeAnswerHandler}
+                removeQuestion={() => removeQuestionHandler(index)} />
+        );
+    });
 
-                <div className="form-group row">
-                    <label 
-                        className="col-sm-3 col-form-label" 
-                        htmlFor="name">Quiz Name:</label>
-                    <div className="col">
-                        <input 
-                            className="form-control" 
-                            type="text" 
-                            id="name" 
-                            name="name"
-                            value={this.state.name}
-                            onChange={this.nameChangedHandler} />
-                    </div>
+    return (
+        <div>
+            <h1 className="page-title">Let's Get Started!</h1>
+
+            <div className="form-group row">
+                <label 
+                    className="col-sm-3 col-form-label" 
+                    htmlFor="name">Quiz Name:</label>
+                <div className="col">
+                    <input 
+                        className="form-control" 
+                        type="text" 
+                        id="name" 
+                        name="name"
+                        value={name}
+                        onChange={nameChangedHandler} />
                 </div>
+            </div>
 
-                {questions}
+            {questionContent}
 
-                <div className="clearfix mb-3">
-                    <button 
-                        className="btn btn-primary btn-sm float-right"
-                        onClick={this.addQuestionHandler}>
-                        <i className="fa fa-plus mr-2"></i>
-                        Add Question
-                    </button>
-                </div>
-
-                <hr />
-                
+            <div className="clearfix mb-3">
                 <button 
-                    className="btn btn-success btn-lg float-right"
-                    onClick={this.createQuizHandler}>
-                    <i className="fa fa-check mr-2"></i>
-                    Create Quiz
+                    className="btn btn-primary btn-sm float-right"
+                    onClick={addQuestionHandler}>
+                    <i className="fa fa-plus mr-2"></i>
+                    Add Question
                 </button>
             </div>
-        );
-    }
+
+            <hr />
+            
+            <button 
+                className="btn btn-success btn-lg float-right"
+                onClick={createQuizHandler}>
+                <i className="fa fa-check mr-2"></i>
+                Create Quiz
+            </button>
+        </div>
+    );
 };
 
 export default QuizBuilder;
