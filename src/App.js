@@ -13,8 +13,18 @@ const App = () => {
   return (
     <Layout>
       <Switch>
-        <Route path="/quiz/create" render={props => <QuizBuilderProvider {...props}><QuizBuilder /></QuizBuilderProvider>} />
-        <Route path="/quiz/:id" render={props => <QuizViewerProvider {...props}><QuizViewer /></QuizViewerProvider>} />
+        <Route path="/quiz/create" render={props => (
+          <QuizBuilderProvider {...props}>
+            <QuizBuilder />
+          </QuizBuilderProvider>
+        )} />
+
+        <Route path="/quiz/:id" render={props => (
+          <QuizViewerProvider {...props}>
+            <QuizViewer />
+          </QuizViewerProvider>
+        )} />
+        
         <Route path="/" component={Landing} />
       </Switch>
     </Layout>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import axios from '../axios-quiz-builder';
 
 export const QuizViewerContext = React.createContext({
@@ -19,16 +19,15 @@ export default (props) => {
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [score, setScore] = useState(0);
 
-    const initHandler = () => {
-        const id = props.match.params.id
-        axios.get(`/quizzes/${id}.json`)
+    const initHandler = useCallback(() => {
+        axios.get(`/quizzes/${props.match.params.id}.json`)
             .then(response => {
                 setQuiz(response.data);
             })
             .catch(error => {
                 console.log(error);
             });
-    };
+    }, [setQuiz, props.match.params.id]);
 
     const checkAnswerHandler = index => {
         const correctAnswer = quiz.questions[page].correctAnswer;
@@ -57,7 +56,6 @@ export default (props) => {
     return (
         <QuizViewerContext.Provider value={{
             quiz: quiz,
-            setQuiz: setQuiz,
             page: page,
             selectedAnswer: selectedAnswer,
             score: score,
