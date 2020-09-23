@@ -1,9 +1,14 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-import classes from './Question.module.css';
+import { QuizBuilderContext } from '../../../context/quizbuilder-context';
 import Answer from './Answer/Answer';
+import classes from './Question.module.css';
 
-const question = props => {
+const Question = props => {
+    const removeQuestionHandler = useContext(QuizBuilderContext).removeQuestionHandler;
+    const addAnswerHandler = useContext(QuizBuilderContext).addAnswerHandler;
+    const questionPropertyChangedHandler = useContext(QuizBuilderContext).questionPropertyChangedHandler;
+
     const answers = props.answers.map((item, index) => {
         return (
             <Answer 
@@ -12,9 +17,7 @@ const question = props => {
                 answerIndex={index}
                 answer={item}
                 correctAnswer={props.correctAnswer}
-                questionPropertyChanged={props.questionPropertyChanged}
-                answerChanged={props.answerChanged}
-                removeAnswer={() => props.removeAnswer(props.questionIndex, index)} />
+            />
         );
     });
 
@@ -27,7 +30,7 @@ const question = props => {
 
                 <button 
                     className="btn btn-danger btn-sm float-right"
-                    onClick={props.removeQuestion}>
+                    onClick={() => removeQuestionHandler(props.questionIndex)}>
                     <i className="fa fa-trash"></i>
                 </button>
             </h5>
@@ -43,7 +46,7 @@ const question = props => {
                             id={`${questionIndexString}-title`}
                             name="title" 
                             value={props.title}
-                            onChange={event => props.questionPropertyChanged(event, props.questionIndex, "title")}></textarea>
+                            onChange={event => questionPropertyChangedHandler(event, props.questionIndex, "title")}></textarea>
                     </div>
                 </div>
 
@@ -52,7 +55,7 @@ const question = props => {
                     
                     <button 
                         className="btn btn-primary btn-sm float-right"
-                        onClick={() => props.addAnswer(props.questionIndex)}>
+                        onClick={() => addAnswerHandler(props.questionIndex)}>
                         <i className="fa fa-plus mr-2"></i>
                         Add Answer
                     </button>
@@ -62,4 +65,4 @@ const question = props => {
     );
 };
 
-export default question;
+export default Question;

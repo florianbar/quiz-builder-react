@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
-const answer = props => {
+import { QuizBuilderContext } from '../../../../context/quizbuilder-context';
+
+const Answer = props => {
+    const answerChangedHandler = useContext(QuizBuilderContext).answerChangedHandler;
+    const questionPropertyChangedHandler = useContext(QuizBuilderContext).questionPropertyChangedHandler;
+    const removeAnswerHandler = useContext(QuizBuilderContext).removeAnswerHandler;
+
     const questionIndexString = "question" + props.questionIndex;
     const answerIndexString = "answer" + props.answerIndex;
 
@@ -19,7 +25,7 @@ const answer = props => {
                     className="form-control" 
                     id={`${questionIndexString}-${answerIndexString}`}
                     value={props.answer}
-                    onChange={event => props.answerChanged(event, props.questionIndex, props.answerIndex)} />
+                    onChange={event => answerChangedHandler(event, props.questionIndex, props.answerIndex)} />
             </div>
 
             <div className="col-auto">
@@ -31,7 +37,7 @@ const answer = props => {
                         id={`${questionIndexString}-answers-${answerIndexString}`}
                         value={props.answerIndex}
                         checked={isCorrectAnswer}
-                        onChange={event => props.questionPropertyChanged(event, props.questionIndex, "correctAnswer")} />
+                        onChange={event => questionPropertyChangedHandler(event, props.questionIndex, "correctAnswer")} />
                     <label 
                         className="form-check-label" 
                         htmlFor={`${questionIndexString}-answers-${answerIndexString}`}></label>
@@ -41,7 +47,7 @@ const answer = props => {
             <div className="col-auto">
                 <button 
                     className="btn btn-danger btn-sm float-right"
-                    onClick={props.removeAnswer}>
+                    onClick={() => removeAnswerHandler(props.questionIndex, props.answerIndex)}>
                     <i className="fa fa-trash"></i>
                 </button>
             </div>
@@ -49,4 +55,4 @@ const answer = props => {
     );
 };
 
-export default answer;
+export default Answer;
