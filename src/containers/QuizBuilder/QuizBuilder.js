@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from '../../axios-quiz-builder';
 
 import Question from '../../components/QuizBuilder/Question/Question';
@@ -11,13 +11,10 @@ const initialQuestionSetup = {
 
 const QuizBuilder = props => {
     const [name, setName] = useState("");
-    const [questions, setQuestions] = useState([]);
-
-    useEffect(() => {
-        addQuestionHandler();
-    }, []);
+    const [questions, setQuestions] = useState([initialQuestionSetup]);
 
     const addQuestionHandler = () => {
+        console.log("addQuestionHandler");
         const newQuestion = { ...initialQuestionSetup };
         const updatedQuestions = [ ...questions ].concat(newQuestion);
         setQuestions(updatedQuestions);
