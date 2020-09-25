@@ -61,7 +61,7 @@ const Question = props => {
                     <div className="col">
                         <input 
                             type="text" 
-                            readonly 
+                            readOnly 
                             className="form-control-plaintext" 
                             id={`${questionIndexString}-correct-answer`} 
                             value={props.correctAnswerString} />
