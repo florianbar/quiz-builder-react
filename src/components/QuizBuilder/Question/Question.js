@@ -50,16 +50,30 @@ const Question = props => {
                     </div>
                 </div>
 
-                <div>
-                    {answers}
-                    
-                    <button 
-                        className="btn btn-primary btn-sm float-right"
-                        onClick={() => addAnswerHandler(props.questionIndex)}>
-                        <i className="fa fa-plus mr-2"></i>
-                        Add Answer
-                    </button>
+                {answers}
+
+                <div className="form-group form-row align-items-center">
+                    <label 
+                        htmlFor={`${questionIndexString}-correct-answer`} 
+                        className="col-3 col-form-label">
+                        Correct Answer:
+                    </label>
+                    <div className="col">
+                        <input 
+                            type="text" 
+                            readonly 
+                            className="form-control-plaintext" 
+                            id={`${questionIndexString}-correct-answer`} 
+                            value={props.correctAnswerString} />
+                    </div>
                 </div>
+
+                <button 
+                    className="btn btn-primary btn-sm float-right"
+                    onClick={() => addAnswerHandler(props.questionIndex)}>
+                    <i className="fa fa-plus mr-2"></i>
+                    Add Answer
+                </button>
             </div>
         </div>
     );

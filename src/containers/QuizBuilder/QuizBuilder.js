@@ -17,7 +17,9 @@ const QuizBuilder = props => {
                 questionIndex={index}
                 title={item.title} 
                 answers={item.answers} 
-                correctAnswer={item.correctAnswer} />
+                correctAnswer={item.correctAnswer} 
+                correctAnswerString={item.answers[item.correctAnswer]} 
+            />
         );
     });
 
